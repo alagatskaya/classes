@@ -1,15 +1,15 @@
 class PrintEditionItem {
 
-	constructor (name, releaseDate, pagesCount, state = 100, type = null){
+	constructor (name, releaseDate, pagesCount) {
 		this.name = name;
 		this.releaseDate = releaseDate;
 		this.pagesCount = pagesCount;
-		this.state = state;
-		this.type = type;
+		this.state = 100;
+		this.type = null;
 	}
 
 	
-	set state(stateStatus){
+	set state(stateStatus) {
 		if (stateStatus < 0){
 			this._state = 0;
 		} else if (stateStatus > 100){
@@ -18,11 +18,11 @@ class PrintEditionItem {
 		this._state = stateStatus;
 	}
 }
-	get state(){
+	get state() {
 		return this._state;
 	}
 
-	fix(){
+	fix() {
 		this.state = this.state * 1.5;
 	}
 }
@@ -41,37 +41,37 @@ console.log(sherlock.state); //100
 
 
 class Magazine extends PrintEditionItem {
-	constructor (type){
-		super(type);
+	constructor(name, releaseDate, pagesCount) {
+		super(name, releaseDate, pagesCount);
 		this.type = "magazine";
 	}
 }
 
 class Book extends PrintEditionItem {
-	constructor (author, type){
-		super(author);
+	constructor (author, name, releaseDate, pagesCount) {
+		super(name, releaseDate, pagesCount);
 		this.author = author;
 		this.type = "book";
 	}
 }
 
 class NovelBook extends Book {
-	constructor (type){
-		super(type);
+	constructor (author, name, releaseDate, pagesCount) {
+		super(author, name, releaseDate, pagesCount);
 		this.type = "novel";
 	}
 }
 
 class FantasticBook extends Book {
-	constructor (type){
-		super(type);
+	constructor (author, name, releaseDate, pagesCount) {
+		super(author, name, releaseDate, pagesCount);
 		this.type = "fantastic";
 	}
 }
 
 class DetectiveBook extends Book {
-	constructor (type){
-		super(type);
+	constructor (author, name, releaseDate, pagesCount) {
+		super(author, name, releaseDate, pagesCount);
 		this.type = "detective";
 	}
 }
@@ -80,44 +80,89 @@ const picknick = new FantasticBook(
 	"Аркадий и Борис Стругацкие",
 	"Пикник на обочине",
 	1972,
-	168
-  );
-  
-  console.log(picknick.author); //"Аркадий и Борис Стругацкие"
-  picknick.state = 10;
-  console.log(picknick.state); //10
-  picknick.fix();
-  console.log(picknick.state); //15
+	168);
+
+console.log(picknick.author); //"Аркадий и Борис Стругацкие"
+picknick.state = 10;
+console.log(picknick.state); //10
+picknick.fix();
+console.log(picknick.state); //15
 
 
-  class Library {
-	  constructor(name, books) {
-		  this.name = name;
-		  this.books = [];
-	  }
+class Library {
+	constructor(name) {
+		this.name = name;
+		this.books = [];
+	}
 
-	  addBook(book){
-		this.book = book;
-		  if (state > 30){
-			  this.books.push(book)
-		  }
-	  }
-	  findBookBy(type, value){
-		  this.type = type;
-		  this.value = value;
-		  if (this.findBookBy === true){
-			  return this.book;
-		  	} else {
-			  return null;
+	addBook(book) {
+		if (book.state > 30){
+			this.books.push(book)
+		}
+	}
+
+	findBookBy(type, value) {
+		if (type === 'author') {
+			for(let i = 0; i < this.books.length; i++) {
+				if (this.books[i].type === 'magazine') {
+					continue;
+				}
+				if (this.books[i].author === value) {
+					return(this.books[i]);
+				}
 			}
-	  }
-	  // giveBookByName(bookName){    не понимаю как это сделать
-		 //  this.bookName = bookName;
-		 //  if (bookName)
-	  // }
-  }
+			return null;
+		} else if (type === 'name') {
+			for(let i = 0; i < this.books.length; i++) {
+				if (this.books[i].name === value) {
+					return(this.books[i]);
+				}
+			}
+			return null;
+		} else if (type === 'releaseDate') {
+			for(let i = 0; i < this.books.length; i++) {
+				if (this.books[i].releaseDate === value) {
+					return(this.books[i]);
+				}
+			}
+			return null;
+		} else if (type === 'pagesCount') {
+			for(let i = 0; i < this.books.length; i++) {
+				if (this.books[i].pagesCount === value) {
+					return(this.books[i]);
+				}
+			}
+			return null;
+		} else if (type === 'state') {
+			for(let i = 0; i < this.books.length; i++) {
+				if (this.books[i].state === value) {
+					return(this.books[i]);
+				}
+			}
+			return null;
+		} else if (type === 'type') {
+			for(let i = 0; i < this.books.length; i++) {
+				if (this.books[i].type === value) {
+					return(this.books[i]);
+				}
+			}
+			return null;
+		}
+	}
 
-  const library = new Library("Библиотека имени Ленина");
+	giveBookByName(bookName) {
+		let findBook = new Book;
+		for(let i = 0; i < this.books.length; i++) {
+			if (this.books[i].name === bookName) {
+				findBook = this.books[i];
+				this.books.splice(i, 1);
+				return findBook;
+			}
+		} return null;
+	}
+}
+
+const library = new Library("Библиотека имени Ленина");
 
 library.addBook(
   new DetectiveBook(
@@ -144,6 +189,3 @@ console.log(library.findBookBy("releaseDate", 1924).name); //"Мурзилка"
 console.log("Количество книг до выдачи: " + library.books.length); //Количество книг до выдачи: 4
 library.giveBookByName("Машина времени");
 console.log("Количество книг после выдачи: " + library.books.length); //Количество книг после выдачи: 3
-
-
-  
